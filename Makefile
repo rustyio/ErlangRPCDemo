@@ -10,4 +10,6 @@ clean:
 	./rebar clean
 
 run:
-	erl -pa ebin deps/*/ebin
+	erl \
+	  -pa ebin deps/*/ebin \
+	  -eval "application:start(rpc_demo)"

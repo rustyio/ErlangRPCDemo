@@ -24,5 +24,25 @@ start_link() ->
 %% ===================================================================
 
 init([]) ->
+    %% Start up Webmachine...
+    application:load(webmachine),
+    Options = [
+        {ip, "0.0.0.0"},
+        {port, 8001},
+        {dispatch, dispatch()}
+    ],
+    webmachine_mochiweb:start(Options),
+
+    %% Start up spooky...
+    spooky:start_link(spooky_sequence),
+
+    %% Start up ernie...
+    application:start(ernie_server),
+
     {ok, { {one_for_one, 5, 10}, []} }.
 
+dispatch() ->
+    [
+        {["sequence", n],
+            webmachine_sequence, []}
+    ].
