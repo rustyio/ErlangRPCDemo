@@ -1,6 +1,7 @@
 -module(rpc_demo).
 -export([test/0]).
 -include_lib("eunit/include/eunit.hrl").
+-include("rpc_demo_pb.hrl").
 
 test() ->
     eunit:test(rpc_demo).
@@ -21,7 +22,10 @@ bert_test() ->
     ?assertEqual(Expected, Actual).
 
 pb_test() ->
-    ok.
+    Expected = sequence:sequence(5),
+    {ok, Response} = pb_call("localhost", 8003, #sequencerequest { n = 5 }),
+    Actual = {ok, Response#sequenceresponse.sequence},
+    ?assertEqual(Expected, Actual).
 
 %%% Helper Functions %%%
 
@@ -54,6 +58,30 @@ bert_call_1(Sock, Mod, Fun, Args) ->
                 Other ->
                     {error, {unexpected_response, Other}}
             end;
+        {tcp_closed, Port} ->
+            io:format("Connection closed after sending data: ~p~n", [Port]),
+            {error, {tcp_closed, Port}};
+        Other ->
+            ok = gen_tcp:close(Sock),
+            io:format("Unexpected message: ~p~n", [Other]),
+            {error, Other}
+    end.
+
+
+pb_call(Host, Port, Req) ->
+    case gen_tcp:connect(Host, Port, [binary, {packet, 4}, {header, 1}]) of
+        {ok, Sock} ->
+            pb_call_1(Sock, Req);
+        Other ->
+            io:format("Unable to establish connection: ~p~n", [Other])
+    end.
+pb_call_1(Sock, Req) ->
+    RequestBytes = protobuff_server:encode(Req),
+    ok = gen_tcp:send(Sock, RequestBytes),
+    receive
+        {tcp, _Port, ResponseBytes} ->
+            ok = gen_tcp:close(Sock),
+            {ok, protobuff_server:decode(ResponseBytes)};
         {tcp_closed, Port} ->
             io:format("Connection closed after sending data: ~p~n", [Port]),
             {error, {tcp_closed, Port}};

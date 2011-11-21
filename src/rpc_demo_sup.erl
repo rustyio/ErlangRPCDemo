@@ -24,6 +24,8 @@ start_link() ->
 %% ===================================================================
 
 init([]) ->
+    application:start(inets),
+
     %% Start up Webmachine...
     application:load(webmachine),
     Options = [
@@ -39,7 +41,13 @@ init([]) ->
     %% Start up ernie...
     application:start(ernie_server),
 
-    {ok, { {one_for_one, 5, 10}, []} }.
+    Children = [
+        {protobuff_server_sup, {protobuff_server_sup, start_link, []},
+            permanent, infinity, supervisor, [protobuff_server_sup]},
+        {protobuff_server_listener, {protobuff_server_listener, start_link, []},
+            permanent, 5000, worker, [protobuff_server_listener]}
+    ],
+    {ok, { {one_for_one, 5, 10}, Children}}.
 
 dispatch() ->
     [

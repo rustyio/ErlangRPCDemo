@@ -5,5 +5,8 @@
               {applications,[kernel,stdlib]},
               {mod,{rpc_demo_app,[]}},
               {env,[]},
-              {modules,[ernie_sequence,rpc_demo,rpc_demo_app,rpc_demo_sup,
-                        sequence,spooky_sequence,webmachine_sequence]}]}.
+              {modules,[ernie_sequence,gen_nb_server,gen_server2,
+                        protobuff_server,protobuff_server_listener,
+                        protobuff_server_sup,protobuff_socket,rpc_demo,
+                        rpc_demo_app,rpc_demo_pb,rpc_demo_sup,sequence,
+                        spooky_sequence,webmachine_sequence]}]}.

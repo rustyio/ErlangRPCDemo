@@ -1,0 +1,20 @@
+/* -------------------------------------------------------------------
+**
+** rpc_demo.proto: Protocol buffers for riak
+**
+** Copyright (c) 2011 Rusty Klophaus
+**
+** -------------------------------------------------------------------
+*/
+
+message SequenceRequest {
+    required uint32 n = 1;
+}
+
+message SequenceResponse {
+    repeated bytes sequence = 1;
+}
+
+message SequenceError {
+    required bytes message = 1;
+}

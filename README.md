@@ -12,3 +12,8 @@ It sets up four endpoints:
 + Protocol Buffers
 
 This project also contains benchmarking scripts, allowing us to compare the difference in overhead between the four endpoints listed above.
+
+Notes:
+
++ For HTTP benchmark, try with keepalive off, then on
++ For PB benchmark, reuse connection
