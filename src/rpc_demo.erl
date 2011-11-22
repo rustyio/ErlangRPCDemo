@@ -76,7 +76,9 @@ bert_call_1(Sock, Mod, Fun, Args) ->
 pb_call(Host, Port, Req) ->
     case gen_tcp:connect(Host, Port, [binary, {packet, 4}, {header, 1}]) of
         {ok, Sock} ->
-            pb_call(Sock, Req);
+            Result = pb_call(Sock, Req),
+            gen_tcp:close(Sock),
+            Result;
         Other ->
             io:format("Unable to establish connection: ~p~n", [Other])
     end.
@@ -85,13 +87,11 @@ pb_call(Sock, Req) ->
     ok = gen_tcp:send(Sock, RequestBytes),
     receive
         {tcp, _Port, ResponseBytes} ->
-            ok = gen_tcp:close(Sock),
             {ok, protobuff_server:decode(ResponseBytes)};
         {tcp_closed, Port} ->
             io:format("Connection closed after sending data: ~p~n", [Port]),
             {error, {tcp_closed, Port}};
         Other ->
-            ok = gen_tcp:close(Sock),
             io:format("Unexpected message: ~p~n", [Other]),
             {error, Other}
     end.

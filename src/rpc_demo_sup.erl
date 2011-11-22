@@ -25,6 +25,8 @@ start_link() ->
 
 init([]) ->
     application:start(inets),
+    application:start(sasl),
+    application:start(os_mon),
 
     %% Start up Webmachine...
     application:load(webmachine),
