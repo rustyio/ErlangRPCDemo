@@ -30,12 +30,7 @@ terminate(_Reason, _State) -> ok.
 code_change(_OldVsn, State, _Extra) -> {ok, State}.
 
 new_connection(Socket, State) ->
-    Result = protobuff_server_sup:start_socket(),
-    io:format("[~s:~p] DEBUG - Result: ~p~n", [?MODULE, ?LINE, Result]),
     {ok, Pid} = protobuff_server_sup:start_socket(),
-    io:format("[~s:~p] DEBUG - Pid: ~p~n", [?MODULE, ?LINE, Pid]),
     ok = gen_tcp:controlling_process(Socket, Pid),
-    io:format("[~s:~p] DEBUG - 1: ~p~n", [?MODULE, ?LINE, 1]),
     ok = protobuff_server:set_socket(Pid, Socket),
-    io:format("[~s:~p] DEBUG - 2: ~p~n", [?MODULE, ?LINE, 2]),
     {ok, State}.

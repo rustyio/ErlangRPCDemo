@@ -1,5 +1,10 @@
 -module(rpc_demo).
--export([test/0]).
+-export([
+         test/0,
+         json_call/1,
+         bert_call/5,
+         pb_call/2, pb_call/3
+        ]).
 -include_lib("eunit/include/eunit.hrl").
 -include("rpc_demo_pb.hrl").
 
@@ -71,11 +76,11 @@ bert_call_1(Sock, Mod, Fun, Args) ->
 pb_call(Host, Port, Req) ->
     case gen_tcp:connect(Host, Port, [binary, {packet, 4}, {header, 1}]) of
         {ok, Sock} ->
-            pb_call_1(Sock, Req);
+            pb_call(Sock, Req);
         Other ->
             io:format("Unable to establish connection: ~p~n", [Other])
     end.
-pb_call_1(Sock, Req) ->
+pb_call(Sock, Req) ->
     RequestBytes = protobuff_server:encode(Req),
     ok = gen_tcp:send(Sock, RequestBytes),
     receive

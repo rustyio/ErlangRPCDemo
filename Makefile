@@ -12,4 +12,5 @@ clean:
 run:
 	erl \
 	  -pa ebin deps/*/ebin \
+	  -ernie_server log_level 1 \
 	  -eval "application:start(rpc_demo)"
