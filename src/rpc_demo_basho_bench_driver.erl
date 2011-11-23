@@ -29,6 +29,22 @@
 new(_Id) ->
     %% Ensure that inets is started...
     application:start(inets),
+    inets:start(httpc, [{profile, keep_alive}]),
+    Options1 = [
+               {max_sessions, 10},
+               {max_keep_alive_length, 10},
+               {keep_alive_timeout, 120000}
+              ],
+    httpc:set_options(Options1, keep_alive),
+
+    inets:start(httpc, [{profile, keep_dead}]),
+    Options2 = [
+               {max_sessions, 0},
+               {max_keep_alive_length, 0},
+               {keep_alive_timeout, 1}
+              ],
+    httpc:set_options(Options2, keep_dead),
+
     ensure_module(mochijson2),
 
     %% Read config settings...
@@ -65,7 +81,18 @@ run(webmachine_sequence, _KeyGen, _ValueGen, State) ->
     Expected = State#state.expected,
     URL = lists:flatten(io_lib:format("http://~s:~p/sequence/~p", 
                                       [Host, Port, N])),
-    Actual = rpc_demo:json_call(URL),
+    Actual = rpc_demo:json_call(URL, keep_dead),
+    assertEqual(Expected, Actual),
+    {ok, State};
+
+run(webmachine_reuse_sequence, _KeyGen, _ValueGen, State) ->
+    Host = State#state.webmachine_host,
+    Port = State#state.webmachine_port,
+    N = State#state.n,
+    Expected = State#state.expected,
+    URL = lists:flatten(io_lib:format("http://~s:~p/sequence/~p", 
+                                      [Host, Port, N])),
+    Actual = rpc_demo:json_call(URL, keep_alive),
     assertEqual(Expected, Actual),
     {ok, State};
 
@@ -76,7 +103,18 @@ run(spooky_sequence, _KeyGen, _ValueGen, State) ->
     Expected = State#state.expected,
     URL = lists:flatten(io_lib:format("http://~s:~p/sequence/~p", 
                                       [Host, Port, N])),
-    Actual = rpc_demo:json_call(URL),
+    Actual = rpc_demo:json_call(URL, keep_dead),
+    assertEqual(Expected, Actual),
+    {ok, State};
+
+run(spooky_reuse_sequence, _KeyGen, _ValueGen, State) ->
+    Host = State#state.spooky_host,
+    Port = State#state.spooky_port,
+    N = State#state.n,
+    Expected = State#state.expected,
+    URL = lists:flatten(io_lib:format("http://~s:~p/sequence/~p", 
+                                      [Host, Port, N])),
+    Actual = rpc_demo:json_call(URL, keep_alive),
     assertEqual(Expected, Actual),
     {ok, State};
 

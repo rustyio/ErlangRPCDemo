@@ -1,7 +1,7 @@
 -module(rpc_demo).
 -export([
          test/0,
-         json_call/1,
+         json_call/2,
          bert_call/5,
          pb_call/2, pb_call/3
         ]).
@@ -9,6 +9,8 @@
 -include("rpc_demo_pb.hrl").
 
 test() ->
+    application:start(inets),
+    inets:start(httpc, [{profile, default}]),
     eunit:test(rpc_demo).
 
 webmachine_test() ->
@@ -35,9 +37,14 @@ pb_test() ->
 %%% Helper Functions %%%
 
 json_call(Url) ->
-    Headers = [{"Content-Type", "application/json"}],
+    json_call(Url, default).
+json_call(Url, Profile) ->
+    Headers = [
+               {"Content-Type", "application/json"},
+               {"Connection", "Keep-Alive"}
+              ],
     Request = {Url, Headers},
-    case httpc:request(get, Request, [], []) of
+    case httpc:request(get, Request, [], [], Profile) of
         {ok, {{_, 200, _}, _, Body}} ->
             {ok, mochijson2:decode(Body)};
         Other ->
