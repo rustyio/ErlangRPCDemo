@@ -1,3 +1,6 @@
+%% Erlang RPC Demo
+%% Copyright (c) 2011 Rusty Klophaus (@rustyio)
+%% See MIT-LICENSE for licensing information.
 
 -module(rpc_demo_sup).
 

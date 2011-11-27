@@ -1,3 +1,7 @@
+%% Erlang RPC Demo
+%% Copyright (c) 2011 Rusty Klophaus (@rustyio)
+%% See MIT-LICENSE for licensing information.
+
 -module(protobuff_server_sup).
 -behaviour(supervisor).
 -export([start_link/0, init/1, stop/1]).

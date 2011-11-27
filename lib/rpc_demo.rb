@@ -1,4 +1,9 @@
 #!/usr/bin/env ruby
+
+# Erlang RPC Demo
+# Copyright (c) 2011 Rusty Klophaus (@rustyio)
+# See MIT-LICENSE for licensing information.
+
 require 'rubygems'
 require 'net/http'
 require 'json'
