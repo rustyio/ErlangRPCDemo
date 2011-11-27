@@ -71,11 +71,11 @@ Objective: Demonstrate which interface is the fastest with a large payload (`seq
 
 ### Test 4 - Multiple Hops, Small Payload
 
-Objective: Demonstrate which interface is the fastest with a small payload (`sequence(5)`, 44 bytes) over multiple hops. (Ping times 50 ms.)
+Objective: Demonstrate which interface is the fastest with a small payload (`sequence(5)`, 44 bytes) over multiple hops. (Ping times ~50 ms.)
 
 ### Test 5 - Multiple Hops, Large Payload
 
-Objective: Demonstrate which interface is the fastest with a large payload (`sequence(20000)`, 190kb) over multiple hops. (Ping times 50 ms.)
+Objective: Demonstrate which interface is the fastest with a large payload (`sequence(20000)`, 190kb) over multiple hops. (Ping times ~50 ms.)
 
 
 
