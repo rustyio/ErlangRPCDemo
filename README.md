@@ -1,8 +1,10 @@
 # Erlang RPC Demo Code
 
-This code is for my Erlang DC 2011 talk (http://erlangdc.com/speakers/rusty_klophaus).
+This project was created for an Erlang DC 2011 talk presented by Rusty Klophaus (http://erlangdc.com/speakers/rusty_klophaus).
 
-This project contains sample code to:
+It contains sample code demonstrating cross-language RPC where Erlang
+is the server. In other words, it demonstrates how to call into an
+Erlang service with an Erlang or Ruby client.
 
 + Expose an Erlang service over REST (via Webmachine and Spooky), BERT-RPC, and Protocol Buffers.
 + Connect an Erlang client to the Erlang service over REST, BERT-RPC, or Protocol Buffers.
@@ -10,7 +12,7 @@ This project contains sample code to:
 
 The service generates a list of numbers. For example:
 
-```txt
+```erlang
 sequence(5) -> {ok, ["1", "2", "3", "4", "5"]}.
 ```
 
