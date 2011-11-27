@@ -57,3 +57,25 @@ This project also contains a benchmarking harness for Basho Bench that exercises
 
 # Benchmarking
 
+### Test 1 - Encoding and Decoding
+
+Objective: Demonstrate which encoding scheme (JSON, BERT, or PB) is the fastest.
+
+### Test 2 - Single Hop, Small Payload
+
+Objective: Demonstrate which interface is the fastest with a small payload (`sequence(5)`, 44 bytes) over a single hop. (Ping times <1 ms.)
+
+### Test 3 - Single Hop, Large Payload
+
+Objective: Demonstrate which interface is the fastest with a large payload (`sequence(20000)`, 190kb) over a single hop. (Ping times <1 ms.)
+
+### Test 4 - Multiple Hops, Small Payload
+
+Objective: Demonstrate which interface is the fastest with a small payload (`sequence(5)`, 44 bytes) over multiple hops. (Ping times 50 ms.)
+
+### Test 5 - Multiple Hops, Large Payload
+
+Objective: Demonstrate which interface is the fastest with a large payload (`sequence(20000)`, 190kb) over multiple hops. (Ping times 50 ms.)
+
+
+
