@@ -1,19 +1,57 @@
 # Erlang RPC Demo Code
 
-This project demonstrates how to use REST, Ernie, and Protocol Buffers for cross-language RPC, allowing Ruby to call into Erlang.
+This code is for my Erlang DC 2011 talk (http://erlangdc.com/speakers/rusty_klophaus).
 
-This code will be used for my Erlang DC 2011 talk (http://erlangdc.com/speakers/rusty_klophaus)
+This project contains sample code to:
 
-It sets up four endpoints:
++ Expose an Erlang service over REST (via Webmachine and Spooky), BERT-RPC, and Protocol Buffers.
++ Connect an Erlang client to the Erlang service over REST, BERT-RPC, or Protocol Buffers.
++ Connect a Ruby client to the Erlang service over REST, BERT-RPC, or Protocol Buffers.
+
+The service generates a list of numbers. For example:
+
+```txt
+sequence(5) -> {ok, ["1", "2", "3", "4", "5"]}.
+```
+
+The service is exposed on the following endpoints:
 
 + REST via Webmachine (http://localhost:8001/sequence/5)
-+ REST via Spooky (http://localhost:8001/sequence/5)
++ REST via Spooky (http://localhost:8002/sequence/5)
 + Ernie (port 9999, `{call, ernie_sequence, sequence, [5]}`)
-+ Protocol Buffers
++ Protocol Buffers (port 8003)
 
-This project also contains benchmarking scripts, allowing us to compare the difference in overhead between the four endpoints listed above.
+This project also contains a benchmarking harness for Basho Bench that exercises the Erlang service via the four provided endpoints.
 
-Notes:
+# Files
 
-+ For HTTP benchmark, try with keepalive off, then on
-+ For PB benchmark, reuse connection
+### Misc.
+
++ `src/sequence.erl` - Contains the "service" logic. Simply generates a list of numbers.
++ `lib/rpc_demo.rb` - Ruby clients.
++ `src/rpc_demo.erl` - Helper functions and Erlang clients.
+
+### REST Interface
+
++ `src/spooky_sequence.erl` - Callback module for REST interface. (Spooky)
++ `src/webmachine_sequence.erl` - Callback module for REST interface. (Webmachine)
+
+### BERT-RPC Interface
+
++ `src/ernie_sequence.erl` - Callback module for BERT-RPC interface (Ernie server).
+
+### Protocol Buffers
+
++ `src/protobuff_server_listener.erl` - Waits for incoming PB connections
++ `src/protobuff_server_sup.erl` - Supervise PB connections.
++ `src/protobuff_server.erl` - Serve a PB connection.
++ `src/rpc_demo.proto` - Protocol Buffers definition file.
++ `src/gen_nb_server.erl` - Non-blocking server. Used by `protobuff_server_listener`.
+
+### Benchmarking
+
++ `src/rpc_demo_basho_bench_driver.erl` - Driver for Basho Bench performance test.
++ `priv/rpc_demo.config` - Basho Bench config file.
+
+# Benchmarking
+
