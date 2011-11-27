@@ -74,7 +74,7 @@ new(_Id) ->
             {error, Other}
     end.
 
-run(webmachine_sequence, _KeyGen, _ValueGen, State) ->
+run(webmachine_call, _KeyGen, _ValueGen, State) ->
     Host = State#state.webmachine_host,
     Port = State#state.webmachine_port,
     N = State#state.n,
@@ -85,7 +85,7 @@ run(webmachine_sequence, _KeyGen, _ValueGen, State) ->
     assertEqual(Expected, Actual),
     {ok, State};
 
-run(webmachine_reuse_sequence, _KeyGen, _ValueGen, State) ->
+run(webmachine_reuse_call, _KeyGen, _ValueGen, State) ->
     Host = State#state.webmachine_host,
     Port = State#state.webmachine_port,
     N = State#state.n,
@@ -96,7 +96,7 @@ run(webmachine_reuse_sequence, _KeyGen, _ValueGen, State) ->
     assertEqual(Expected, Actual),
     {ok, State};
 
-run(spooky_sequence, _KeyGen, _ValueGen, State) ->
+run(spooky_call, _KeyGen, _ValueGen, State) ->
     Host = State#state.spooky_host,
     Port = State#state.spooky_port,
     N = State#state.n,
@@ -107,7 +107,7 @@ run(spooky_sequence, _KeyGen, _ValueGen, State) ->
     assertEqual(Expected, Actual),
     {ok, State};
 
-run(spooky_reuse_sequence, _KeyGen, _ValueGen, State) ->
+run(spooky_reuse_call, _KeyGen, _ValueGen, State) ->
     Host = State#state.spooky_host,
     Port = State#state.spooky_port,
     N = State#state.n,
@@ -118,7 +118,7 @@ run(spooky_reuse_sequence, _KeyGen, _ValueGen, State) ->
     assertEqual(Expected, Actual),
     {ok, State};
 
-run(bert_sequence, _KeyGen, _ValueGen, State) ->
+run(bert_call, _KeyGen, _ValueGen, State) ->
     Host = State#state.bert_host,
     Port = State#state.bert_port,
     N = State#state.n,
@@ -127,7 +127,7 @@ run(bert_sequence, _KeyGen, _ValueGen, State) ->
     assertEqual(Expected, Actual),
     {ok, State};
 
-run(pb_sequence, _KeyGen, _ValueGen, State) ->
+run(pb_call, _KeyGen, _ValueGen, State) ->
     Host = State#state.pb_host,
     Port = State#state.pb_port,
     N = State#state.n,
@@ -137,7 +137,7 @@ run(pb_sequence, _KeyGen, _ValueGen, State) ->
     assertEqual(Expected, Actual),
     {ok, State};
 
-run(pb_reuse_sequence, _KeyGen, _ValueGen, State) ->
+run(pb_reuse_call, _KeyGen, _ValueGen, State) ->
     Socket = State#state.pb_socket,
     N = State#state.n,
     Expected = State#state.expected,
@@ -145,6 +145,28 @@ run(pb_reuse_sequence, _KeyGen, _ValueGen, State) ->
     Actual = {ok, Response#sequenceresponse.sequence},
     assertEqual(Expected, Actual),
     {ok, State};
+
+run(json_encode, _KeyGen, _ValueGen, State) ->
+    {ok, Expected} = State#state.expected,
+    Actual = mochijson2:decode(mochijson2:encode(Expected)),
+    assertEqual(Expected, Actual),
+    {ok, State};
+
+run(bert_encode, _KeyGen, _ValueGen, State) ->
+    {ok, Expected} = State#state.expected,
+    Actual = bert:decode(bert:encode(Expected)),
+    assertEqual(Expected, Actual),
+    {ok, State};
+
+run(pb_encode, _KeyGen, _ValueGen, State) ->
+    {ok, Expected} = State#state.expected,
+    Msg = #sequenceresponse { sequence = Expected },
+    [MsgType, MsgBytes1] = protobuff_server:encode(Msg),
+    Msg2 = protobuff_server:decode([MsgType|iolist_to_binary(MsgBytes1)]),
+    Actual = Msg2#sequenceresponse.sequence,
+    assertEqual(Expected, Actual),
+    {ok, State};
+
 run(Other, _KeyGen, _ValueGen, _State) ->
     io:format("[~s:~p] DEBUG - {unknown_operation, Other}: ~p~n", [?MODULE, ?LINE, {unknown_operation, Other}]),
     throw({unknown_operation, Other}).
